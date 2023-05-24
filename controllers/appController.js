@@ -96,46 +96,94 @@ export async function register(req,res){
 // POST: http://loclhost:8080/api/login
 export async function login(req,res){
    
-    const { username, password } = req.body;
-
     try {
-        
-        UserModel.findOne({ username })
-                .then(user => {
-                bcrypt.compare(password, user.password)
-                    .then(passwordCheck => {
+    const { username, password } = req.body;
+    
+    console.log(username, password)
+    //validation
+    if (!username || !password) {
+        return res.status(401).send({
+          success: false,
+          message: "Please provide email or password",
+        });
+    }
 
-                        if(!passwordCheck) return res.status(400).send({ error: "Don't have Password"});
+    const user = await UserModel.findOne({ username });
 
-                        // create jwt token
-                        const token = jwt.sign({
-                                        userId: user._id,
-                                        username : user.username
-                                    }, ENV.JWT_SECRET , { expiresIn : "24h"});
+    if (!user) {
+        return res.status(200).send({
+          success: false,
+          message: "Username is not registerd",
+        });
+    }
 
-                        return res.status(200).send({
-                            msg: "Login Successful...!",
-                            username: user.username,
-                            token
-                        });    
+    //password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).send({
+        success: false,
+        message: "Invlid username or password",
+      });
+    }
+
+    const token = jwt.sign({
+        userId: user._id,
+        username : user.username
+    }, ENV.JWT_SECRET , { expiresIn : "24h"});
+
+    return res.status(200).send({
+        success: true,
+        messgae: "login successfully",
+        token,
+        user,
+    });
+
+    }catch(error){
+        console.log(error);
+    return res.status(500).send({
+      success: false,
+      message: "Error In Login Callback",
+      error,
+    });
+    }
+}
+        // UserModel.findOne({ username })
+        //         .then(user => {
+        //         bcrypt.compare(password, user.password)
+        //             .then(passwordCheck => {
+
+        //                 if(!passwordCheck) return res.status(400).send({ error: "Don't have Password"});
+
+        //                 // create jwt token
+        //                 const token = jwt.sign({
+        //                     userId: user._id,
+        //                     username : user.username
+        //                 }, ENV.JWT_SECRET , { expiresIn : "24h"});
+
+        //                 return res.status(200).send({
+        //                     msg: "Login Successful...!",
+        //                     username: user.username,
+        //                     token,
+        //                     userId
+        //                 });    
                         // }                   
                         // else{
                         //     return res.status(402).send({error: "Access Denied"});
                         // }             
 
-                    })
-                    .catch(error =>{
-                        return res.status(400).send({ error: "Password does not Match"})
-                    })
-            })
-            .catch( error => {
-                return res.status(404).send({ error : "Username not Found"});
-            })
+//                     })
+//                     .catch(error =>{
+//                         return res.status(400).send({ error: "Password does not Match"})
+//                     })
+//             })
+//             .catch( error => {
+//                 return res.status(404).send({ error : "Username not Found"});
+//             })
 
-    } catch (error) {
-        return res.status(500).send({ error});
-    }
-}
+//     } catch (error) {
+//         return res.status(500).send({ error});
+//     }
+// } 
 
 // GET: http://loclhost:8080/api/user/example123
 export async function getUser(req,res){

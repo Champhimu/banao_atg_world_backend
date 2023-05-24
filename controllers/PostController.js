@@ -66,7 +66,7 @@ export async function getAllPost(req, res) {
 export async function updatePost(req,res) {
     try{
         const {id} = req.params;
-        const { title, description, image } = req.body;
+        const { title, description, image, category } = req.body;
 
         const post = await PostModel.findByIdAndUpdate(
             id,

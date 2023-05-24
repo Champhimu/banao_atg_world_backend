@@ -7,7 +7,7 @@ import * as controller from '../controllers/PostController.js'
 router.route("/create-post").post(controller.createPost);
 
 // GET
-router.route("/all-posts").get(controller.getAllPost)
+router.route("/getAllPosts").get(controller.getAllPost)
 // GET single blog
 router.route("/get-post/:id").get(controller.getPostById);
 // GET ALL Blog of Single User
