@@ -3,8 +3,7 @@ const router = Router();
 
 // import all controllers
 import * as controller from '../controllers/appController.js'
-import * as postcontroller from '../controllers/PostController.js'
-import {registerMail} from '../controllers/mailer.js'
+import {registerMail} from '../controllers/realmailer.js'
 import Auth, {localVariables} from "../middleware/auth.js";
 
 // Post Methods
