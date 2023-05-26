@@ -2,6 +2,8 @@ import { Router } from "express";
 const router = Router();
 
 import * as controller from '../controllers/PostController.js'
+import Auth from "../middleware/auth.js";
+
 
 // POST
 router.route("/create-post").post(controller.createPost);
